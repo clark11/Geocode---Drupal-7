@@ -1,0 +1,11 @@
+name = Nodet
+description = "Trasforma indirizzi in pdi"
+package = Custom
+version = 1
+core = 7.x
+files[] = nodet.module
+
+
+; Information added by drupal.org packaging script on 2013-04-28
+version = "7.0-alpha3"
+project = "drupal"

@@ -1,0 +1,77 @@
+<?php
+/**
+* @file
+* Creato da Clkweb.it - 2013
+ * Modulo per Drupal 7 per trasformare sttrsverso le Api di Google Maps
+ * dei campi di testo in coordinate geografiche che verranno salvate nella tabella 
+ * del modulo Geolocation Fields:
+ * http://drupal.org/project/geolocation
+*/
+
+/**
+* Implementation of hook_menu().
+*/
+function nodet_menu() {
+    $items['admin/content/geocode'] = array(
+        'title' => 'Geocode',
+        'description' => 'kjjfi',
+        'page callback' => 'nodet_geocode',
+        'access arguments' => array('administer site configuration'),
+        'type' => MENU_NORMAL_ITEM,
+        'file' => NULL,
+    );
+    return $items;
+}
+/**
+* Build Form
+*/
+function nodet_geocode() {
+    $prevobj = array();
+    $output = '';
+    while(true)
+    {
+        $result = db_query("SELECT n.nid FROM node n inner join field_data_field_provincia p on n.nid = p.entity_id
+            where n.type = 'negozio' and n.nid not in (select distinct entity_id from field_data_field_indirizzo)" .
+//              "and p.field_provincia_value LIKE 'ag'" .
+              "and n.nid > 250
+        ORDER BY nid ASC LIMIT 500");
+        $output .= 'Trovati ' . count($result) . ' elementi<br/>';
+        if(!count($result)) {
+            break;
+        }
+        
+        $count = 0;
+        foreach ($result as $obj) {
+            $node = node_load($obj->nid);
+            $via = field_get_items('node', $node, 'field_indirizzotxt', $node->language);
+            $citta = field_get_items('node', $node, 'field_citt_', $node->language);
+            $cap = field_get_items('node', $node, 'field_cap', $node->language);        
+
+            $string = $citta[0]['value'] . ', ' . $cap[0]['value'] . ', ' . $via[0]['value'];
+            
+            $xml = simplexml_load_file('http://maps.googleapis.com/maps/api/geocode/xml?sensor=false&address='.$string);
+            //$output .= print_r($xml, true);
+            if ($xml->status == 'OK') {
+                $res = $xml->result->geometry->location;
+                $lat = (float) $res->lat;
+                $lng = (float) $res->lng;
+                $node->field_indirizzo[$node->language] = array(0 => array(
+                    'lat' => $lat,
+                    'lng' => $lng,
+                    'lat_sin' => sin(deg2rad($lat)),
+                    'lat_cos' => cos(deg2rad($lat)),
+                    'lng_rad' => deg2rad($lng)
+                ));
+                node_save($node);
+                $count++;
+            }
+            else {
+                $output .= $node->nid . ': '. $xml->status . '<br/>';
+            }
+        }
+        if (!$count)
+            break;
+    }
+    return $output;
+}
+?>

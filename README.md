@@ -8,6 +8,6 @@ Utilizzato su www.pubblicittaonline.it per geolocalizzare oltre 200 mila aziende
 Avviso: Google consente un massimo di 2500 chiamate al giorno per la conversione degli indirizzi, si consiglia di eseguire lo script
 una volta ogni 24h se il numero dei nodi da trasformare supera questo limite.
 
-#Autore: 
-#Claudio Casuccio - Clkweb.it 
-#2013 net02
+Autore: 
+Claudio Casuccio - Clkweb.it 
+2013 net02

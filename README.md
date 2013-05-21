@@ -10,4 +10,4 @@ una volta ogni 24h se il numero dei nodi da trasformare supera questo limite.
 
 Autore: 
 Claudio Casuccio - Clkweb.it 
-2013 net02
+rev. 2013 net02

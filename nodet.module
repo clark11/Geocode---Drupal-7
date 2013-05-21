@@ -2,7 +2,7 @@
 /**
 * @file
 * Creato da Clkweb.it - 2013
- * Modulo per Drupal 7 per trasformare sttrsverso le Api di Google Maps
+ * Modulo per Drupal 7 per trasformare attraverso le Api di Google Maps
  * dei campi di testo in coordinate geografiche che verranno salvate nella tabella 
  * del modulo Geolocation Fields:
  * http://drupal.org/project/geolocation
@@ -14,7 +14,7 @@
 function nodet_menu() {
     $items['admin/content/geocode'] = array(
         'title' => 'Geocode',
-        'description' => 'kjjfi',
+        'description' => 'Esegui script di conversione indirizzi in geocode',
         'page callback' => 'nodet_geocode',
         'access arguments' => array('administer site configuration'),
         'type' => MENU_NORMAL_ITEM,
@@ -30,6 +30,7 @@ function nodet_geocode() {
     $output = '';
     while(true)
     {
+        //Edit  with your node type and existing CCK fields
         $result = db_query("SELECT n.nid FROM node n inner join field_data_field_provincia p on n.nid = p.entity_id
             where n.type = 'negozio' and n.nid not in (select distinct entity_id from field_data_field_indirizzo)" .
 //              "and p.field_provincia_value LIKE 'ag'" .
@@ -43,9 +44,9 @@ function nodet_geocode() {
         $count = 0;
         foreach ($result as $obj) {
             $node = node_load($obj->nid);
-            $via = field_get_items('node', $node, 'field_indirizzotxt', $node->language);
-            $citta = field_get_items('node', $node, 'field_citt_', $node->language);
-            $cap = field_get_items('node', $node, 'field_cap', $node->language);        
+            $via = field_get_items('node', $node, 'field_indirizzotxt', $node->language); //add your txt address CCK
+            $citta = field_get_items('node', $node, 'field_citt_', $node->language); //add your City txt CCK
+            $cap = field_get_items('node', $node, 'field_cap', $node->language); //add your cap txt or int CCK        
 
             $string = $citta[0]['value'] . ', ' . $cap[0]['value'] . ', ' . $via[0]['value'];
             
